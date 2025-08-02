@@ -16,7 +16,7 @@ We have these scenarios:
 - **cilium**:
   The same as single node, but uses cilium cni instead of flannel.
 - **kube-vip**
-  The same as single node, but uses kube-vip as service loadbalancer instead of MetalLB
+  The same as single node, but uses kube-vip as service loadbalancer instead of Cilium-provided LB
 
 ## How to execute
 

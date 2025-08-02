@@ -10,7 +10,6 @@ argument_specs:
       cilium_bgp:
         description:
           - Enable cilium BGP control plane for LB services and pod cidrs.
-          - Disables the use of MetalLB.
         type: bool
         default: ~
 
@@ -89,21 +88,6 @@ argument_specs:
       kube_vip_lb_ip_range:
         description: IP range for kube-vip load balancer
         default: ~
-
-      metal_lb_controller_tag_version:
-        description: Image tag for MetalLB
-        default: v0.14.3
-
-      metal_lb_speaker_tag_version:
-        description: Image tag for MetalLB
-        default: v0.14.3
-
-      metal_lb_type:
-        choices:
-          - frr
-          - native
-        default: native
-        description: Use FRR mode or native. Valid values are `frr` and `native`
 
       proxy_env:
         type: dict

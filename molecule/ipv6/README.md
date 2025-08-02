@@ -4,7 +4,7 @@ This scenario contains a cluster configuration which is _IPv6 first_, but still 
 This means:
 
 - The API server VIP is an IPv6 address.
-- The MetalLB pool consists of both IPv4 and IPv4 addresses.
+- The Cilium LB pool consists of both IPv4 and IPv4 addresses.
 - Nodes as well as cluster-internal resources (pods and services) are accessible via IPv4 as well as IPv6.
 
 ## Network design
@@ -16,7 +16,7 @@ The following subnets are used:
   That includes:
 
   - The VIP for the Kubernetes API server: `fdad:bad:ba55::333`
-  - Services load-balanced by MetalLB: `fdad:bad:ba55::1b:0/112`
+  - Services load-balanced by Cilium: `fdad:bad:ba55::1b:0/112`
   - Cluster nodes: `fdad:bad:ba55::de:0/112`
   - The host executing Vagrant: `fdad:bad:ba55::1`
 
@@ -29,7 +29,7 @@ The following subnets are used:
 IPv4 networking is also available:
 
 - The nodes have addresses inside `192.168.123.0/24`.
-  MetalLB also has a bit of address space in this range: `192.168.123.80-192.168.123.90`
+  Cilium also has a bit of address space in this range: `192.168.123.80-192.168.123.90`
 - For pods and services, the k3s defaults (`10.42.0.0/16` and `10.43.0.0/16)` are used.
 
 Note that the host running Vagrant is not part any of these IPv4 networks.
