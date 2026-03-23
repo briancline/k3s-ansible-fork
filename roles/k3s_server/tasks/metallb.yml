@@ -1,7 +1,7 @@
 ---
 - name: Create manifests directory on first master
   ansible.builtin.file:
-    path: /var/lib/rancher/k3s/server/manifests
+    path: "{{ data_dir }}/server/manifests"
     state: directory
     owner: root
     group: root

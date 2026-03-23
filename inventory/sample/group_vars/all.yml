@@ -43,6 +43,7 @@ k3s_master_taint: "{{ true if groups['node'] | default([]) | length >= 1 else fa
 
 # Common args for servers and agents:
 extra_args: >-
+  --data-dir="{{ data_dir }}"
   --node-ip={{ k3s_node_ip }}
 
 extra_server_args: >-

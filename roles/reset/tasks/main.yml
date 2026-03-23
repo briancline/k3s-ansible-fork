@@ -26,6 +26,7 @@
     - /var/lib/kubelet/pods
     - /var/lib/kubelet/plugins
     - /run/netns/cni-
+    - "{{ data_dir }}"
   loop_control:
     loop_var: mounted_fs
 
@@ -46,6 +47,7 @@
     - /var/lib/rancher/
     - /var/lib/cni/
     - /etc/cni/net.d
+    - "{{ data_dir }}"
 
 - name: Remove K3s http_proxy files
   ansible.builtin.file:
