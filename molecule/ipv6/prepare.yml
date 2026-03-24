@@ -30,12 +30,12 @@
         name: net.ipv6.conf.{{ item }}.accept_dad
         value: "0"
       with_items:
-        - "{{ flannel_iface }}"
+        - "{{ cilium_iface }}"
 
     - name: Write IPv4 configuration
       ansible.builtin.template:
-        src: 55-flannel-ipv4.yaml.j2
-        dest: /etc/netplan/55-flannel-ipv4.yaml
+        src: 55-cilium-ipv4.yaml.j2
+        dest: /etc/netplan/55-cilium-ipv4.yaml
         owner: root
         group: root
         mode: "0644"
