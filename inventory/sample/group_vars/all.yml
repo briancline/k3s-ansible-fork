@@ -57,7 +57,7 @@ extra_server_args: >-
   --disable servicelb
   --disable traefik
   {% if k3s_master_taint %}
-  --node-taint "node-role.kubernetes.io/master=true:NoSchedule"
+  --node-taint "node-role.kubernetes.io/control-plane:NoSchedule"
   {% endif %}
 
 extra_agent_args: >-
