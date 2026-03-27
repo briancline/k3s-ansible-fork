@@ -101,6 +101,16 @@
             - /tmp/k3s/cilium-linux-{{ cli_arch }}.tar.gz
             - /tmp/k3s/cilium-linux-{{ cli_arch }}.tar.gz.sha256sum
 
+    - name: Install Gateway API CRDs (experimental)
+      ansible.builtin.command:
+        cmd: >-
+          {{ k3s_kubectl_binary | default('k3s kubectl') }}
+          apply
+          -f https://github.com/kubernetes-sigs/gateway-api/releases/download/{{ gateway_api_version }}/experimental-install.yaml
+      register: gateway_api_crds
+      when: cilium_gateway_api
+      changed_when: ("configured" in gateway_api_crds.stdout or "created" in gateway_api_crds.stdout)
+
     - name: Wait for connectivity to control plane VIP
       ansible.builtin.command: ping -c 1 {{ apiserver_endpoint }}
       register: ping_result
@@ -185,6 +195,7 @@
         --helm-set bpf.loadBalancer.algorithm={{ bpf_lb_algorithm }}
         --helm-set bpf.loadBalancer.mode={{ bpf_lb_mode }}
         {% endif %}
+        --helm-set gatewayAPI.enabled={{ cilium_gateway_api }}
       environment:
         KUBECONFIG: "{{ ansible_user_dir }}/.kube/config"
       register: cilium_install_result

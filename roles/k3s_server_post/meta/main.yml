@@ -15,6 +15,10 @@ argument_specs:
         description: BPF lb mode
         default: hybrid
 
+      gateway_api_version:
+        description: Gateway API CRD version from kubernetes-sigs/gateway-api (must match Cilium version compatibility)
+        default: v1.1.0
+
       cilium_bgp:
         description:
           - Enable cilium BGP control plane for LB services and pod cidrs.
@@ -71,6 +75,11 @@ argument_specs:
       cluster_cidr:
         description: Inner-cluster IP range
         default: 10.52.0.0/16
+
+      cilium_gateway_api:
+        description: Enable Cilium Gateway API support (installs experimental CRDs)
+        type: bool
+        default: true
 
       enable_bpf_masquerade:
         description: Use IP masquerading
