@@ -1,42 +1,83 @@
+# Cilium's CRD spec shows all of the below resources as not being namespaced.
+# Always omit namespaces from these.
+
 ---
-apiVersion: "cilium.io/v2alpha1"
-kind: CiliumBGPPeeringPolicy
+apiVersion: cilium.io/v2
+kind: CiliumBGPClusterConfig
 metadata:
   name: bgp-peering-policy
 spec:
-  virtualRouters:
-    - localASN: {{ cilium_bgp_my_asn }}
-      exportPodCIDR: {{ cilium_exportPodCIDR }}
-      neighbors:
+  nodeSelector:
+    matchLabels:
+      bgp-enabled: "true"
+  bgpInstances:
+    - name: instance-{{ cilium_bgp_my_asn }}
+      localASN: {{ cilium_bgp_my_asn }}
+      peers:
 {% if _cilium_bgp_neighbors | length > 0 %}
 {%   for item in _cilium_bgp_neighbors %}
-        - peerAddress: {{ item.peer_address }}/32
+        - name: peer-{{ item.peer_address | replace('.', '-') }}
           peerASN: {{ item.peer_asn }}
-          eBGPMultihopTTL: 10
-          connectRetryTimeSeconds: 120
-          holdTimeSeconds: 90
-          keepAliveTimeSeconds: 30
-          gracefulRestart:
-            enabled: true
-            restartTimeSeconds: 120
+          peerAddress: {{ item.peer_address }}
+          peerConfigRef:
+            name: upstream-peer-config
 {%   endfor %}
 {% else %}
-        - peerAddress: {{ cilium_bgp_peer_address }}/32
+        - name: peer-{{ cilium_bgp_peer_address | replace('.', '-') }}
           peerASN: {{ cilium_bgp_peer_asn }}
-          eBGPMultihopTTL: 10
-          connectRetryTimeSeconds: 120
-          holdTimeSeconds: 90
-          keepAliveTimeSeconds: 30
-          gracefulRestart:
-            enabled: true
-            restartTimeSeconds: 120
+          peerAddress: {{ cilium_bgp_peer_address }}
+          peerConfigRef:
+            name: upstream-peer-config
 {% endif %}
-      serviceSelector:
-        matchExpressions:
-          - {key: somekey, operator: NotIn, values: ["never-used-value"]}
 
 ---
-apiVersion: "cilium.io/v2alpha1"
+apiVersion: cilium.io/v2
+kind: CiliumBGPPeerConfig
+metadata:
+  name: upstream-peer-config
+spec:
+  ebgpMultihop: 10
+  gracefulRestart:
+    enabled: true
+    restartTimeSeconds: 15
+  timers:
+    connectRetryTimeSeconds: 120
+    holdTimeSeconds: 90
+    keepAliveTimeSeconds: 30
+  families:
+    - afi: ipv4
+      safi: unicast
+      advertisements:
+        matchLabels:
+          advertise: bgp
+
+---
+# The "advertise: bgp" label links this to the PeerConfig's advertisement selector
+apiVersion: cilium.io/v2
+kind: CiliumBGPAdvertisement
+metadata:
+  name: bgp-adv-service-lbs
+  labels:
+    advertise: bgp
+spec:
+  advertisements:
+    - advertisementType: Service
+      service:
+        addresses:
+          - LoadBalancerIP
+      selector: {}
+## The above empty selector effectively advertises *all* service IPs with an LBIP. As noted
+## by the Cilium docs, to advertise a specific subset of services that have a predetermined
+## custom label set on them:
+#       selector:
+#         matchExpressions:
+#           - { key: someLabel, operator: In, values: [someMatchingValue] }
+{% if cilium_exportPodCIDR | default(true) | bool %}
+    - advertisementType: PodCIDR
+{% endif %}
+
+---
+apiVersion: cilium.io/v2
 kind: CiliumLoadBalancerIPPool
 metadata:
   name: vip-apps-default
