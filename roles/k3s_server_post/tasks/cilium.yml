@@ -36,7 +36,7 @@
         dest: /tmp/k3s/cilium-cli-stable.txt
         owner: root
         group: root
-        mode: "0755"
+        mode: "0644"
 
     - name: Read Cilium CLI stable version from file
       ansible.builtin.command: cat /tmp/k3s/cilium-cli-stable.txt
@@ -73,7 +73,7 @@
             dest: /tmp/k3s/cilium-linux-{{ cli_arch }}{{ item }}
             owner: root
             group: root
-            mode: "0755"
+            mode: "0644"
           loop:
             - .tar.gz
             - .tar.gz.sha256sum
@@ -265,7 +265,7 @@
             dest: /tmp/k3s/cilium-bgp.yaml
             owner: root
             group: root
-            mode: "0755"
+            mode: "0644"
 
         - name: Apply BGP manifests
           ansible.builtin.command:
