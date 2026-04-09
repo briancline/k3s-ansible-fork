@@ -72,7 +72,7 @@ spec:
 #       selector:
 #         matchExpressions:
 #           - { key: someLabel, operator: In, values: [someMatchingValue] }
-{% if cilium_exportPodCIDR | default(true) | bool %}
+{% if cilium_export_pod_cidr | default(true) | bool %}
     - advertisementType: PodCIDR
 {% endif %}
 

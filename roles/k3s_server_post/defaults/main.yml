@@ -7,7 +7,7 @@ bpf_lb_mode: hybrid
 gateway_api_version: v1.1.0
 
 cilium_bgp: false
-cilium_exportPodCIDR: true  # noqa var-naming
+cilium_export_pod_cidr: true
 cilium_bgp_my_asn: 64513
 cilium_bgp_peer_asn: 64512
 cilium_bgp_neighbors: []

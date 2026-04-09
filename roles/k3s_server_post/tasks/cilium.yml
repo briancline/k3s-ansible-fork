@@ -177,7 +177,7 @@
         --helm-set operator.replicas="1"
         {{ '--helm-set devices=' + cilium_iface if cilium_iface != 'auto' else '' }}
         --helm-set ipam.operator.clusterPoolIPv4PodCIDRList={{ cluster_cidr }}
-        {% if cilium_mode == "native" or (cilium_bgp and cilium_exportPodCIDR != 'false') %}
+        {% if cilium_mode == "native" or (cilium_bgp and cilium_export_pod_cidr != 'false') %}
         --helm-set ipv4NativeRoutingCIDR={{ cluster_cidr }}
         {% endif %}
         --helm-set k8sServiceHost="127.0.0.1"
