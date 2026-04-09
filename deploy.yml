@@ -27,6 +27,8 @@
   hosts: master
   environment: "{{ proxy_env | default({}) }}"
   roles:
+    - role: kube_vip
+      become: true
     - role: k3s_server
       become: true
 

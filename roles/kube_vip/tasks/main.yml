@@ -1,0 +1,43 @@
+---
+- name: Deploy kube-vip on first master
+  when: ansible_hostname == hostvars[groups[group_name_master][0]]['ansible_hostname']
+  block:
+    - name: Merge kube-vip BGP peers
+      ansible.builtin.set_fact:
+        _kube_vip_bgp_peers: >-
+          {{ lookup('community.general.merge_variables',
+                    '^kube_vip_bgp_peers__.+$',
+                    initial_value=kube_vip_bgp_peers,
+                    groups=kube_vip_bgp_peers_groups) }}
+
+    - name: Create manifests directory
+      ansible.builtin.file:
+        path: "{{ data_dir }}/server/manifests"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Download kube-vip RBAC manifest
+      ansible.builtin.get_url:
+        url: https://kube-vip.io/manifests/rbac.yaml
+        dest: "{{ data_dir }}/server/manifests/vip-rbac.yaml"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Template kube-vip DaemonSet manifest
+      ansible.builtin.template:
+        src: vip.yaml.j2
+        dest: "{{ data_dir }}/server/manifests/vip.yaml"
+        owner: root
+        group: root
+        mode: "0644"
+
+    # - name: Download kube-vip cloud provider manifest
+    #   ansible.builtin.get_url:
+    #     url: https://raw.githubusercontent.com/kube-vip/kube-vip-cloud-provider/{{ kube_vip_cloud_provider_tag_version }}/manifest/kube-vip-cloud-controller.yaml  # noqa yaml[line-length]
+    #     dest: "{{ data_dir }}/server/manifests/kube-vip-cloud-controller.yaml"
+    #     owner: root
+    #     group: root
+    #     mode: "0644"

@@ -22,9 +22,6 @@
   ansible.builtin.include_tasks: http_proxy.yml
   when: proxy_env is defined
 
-- name: Deploy kube-vip manifests
-  ansible.builtin.include_tasks: vip.yml
-
 - name: Initialize cluster via transient k3s-init service
   ansible.builtin.command:
     cmd: systemd-run -p RestartSec=2 -p Restart=on-failure --unit=k3s-init k3s server {{ server_init_args }}
